@@ -1,0 +1,47 @@
+﻿@page "/"
+
+
+@if (done)
+{
+    <Wurdz.Components.Board />
+    <br/>
+    <div class="list-group">
+        <Dropzone Items="@urls">
+            <div class="card">
+                <div class="list-group-item card-img">  src="@context" width="60" alt="Alternate Text" /></div>
+            </div>
+        </Dropzone>
+    </div>
+}
+
+
+@code{     
+
+
+    GameBoard b;
+    Boolean done = false;
+    List<string> urls = new List<string>();
+
+    protected override void OnInitialized()
+    {
+        //Console.WriteLine("inside initialize.");
+        base.OnInitialized();
+        //b = new GameBoard(10);
+        done = true;
+    }
+    void makeImageList()
+    {
+        string url = "images/A.svg";
+        urls.Add(url);
+        url = "images/B.svg";
+        urls.Add(url);
+        url = "images/C.svg";
+        urls.Add(url);
+        url = "images/BL.svg";
+        urls.Add(url);
+
+
+    }
+
+
+}

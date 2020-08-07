@@ -1,0 +1,86 @@
+﻿<h3>Board</h3>
+<div class="row">
+    <div class="col-8">
+        <table class="table-bordered">
+            @if (board != null)
+            {
+
+
+                @for (int i = 0; i < board.numCellsPerSide; i++)
+                {
+                    <tr>
+                        @for (int j = 0; j < board.numCellsPerSide; j++)
+                        {
+                            @if (i == 7 && j == 7)
+                            {
+                                @*<Plk.Blazor.DragDrop.Dropzone Items="@board.">*@
+                                <td style="background-color:@board.cells[i,j].color" class="boldborder">@board.cells[i, j].caption</td>
+                                @*</Plk.Blazor.DragDrop.Dropzone>*@
+                            }
+                            else
+                            {
+                                @*<Plk.Blazor.DragDrop.Dropzone>*@
+                                <td style="background-color:@board.cells[i,j].color">@board.cells[i, j].caption</td>
+                                @*</Plk.Blazor.DragDrop.Dropzone>*@
+                            }
+
+                        }
+                    </tr>
+                }
+
+            }
+
+
+        </table>
+    </div>
+    <div class="col-4">
+        <ul>
+            <Dropzone Items="@myListCells">
+                <li>
+                    @context.caption
+                </li>
+            </Dropzone>
+        </ul>
+    </div>
+</div>
+<style>
+    td {
+        width: 50px;
+        height: 50px;
+        text-align: center;
+    }
+
+    .table-bordered {
+        border: solid black 2px !important;
+    }
+
+    .boldborder {
+        border: solid black 4px !important;
+    }
+</style>
+
+@code {
+    static int numCells = 15;
+    string title = "My Wurdz Game";
+    string color;
+    List<Cell> myListCells = new List<Cell>();
+
+    GameBoard board = new GameBoard(numCells);
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        makeCells();
+    }
+
+    void makeCells()
+    {
+        foreach (Cell c in @board.cells)
+        {
+            myListCells.Add(c);
+        }
+    }
+
+
+
+}
