@@ -1,44 +1,97 @@
 ﻿@page "/"
+@using Wurdz.Shared.Models
 
-
+<Wurdz.Components.Board />
+<br />
 @if (done)
 {
-    <Wurdz.Components.Board />
-    <br/>
-    <div class="list-group">
-        <Dropzone Items="@urls">
-            <div class="card">
-                <div class="list-group-item card-img">  src="@context" width="60" alt="Alternate Text" /></div>
-            </div>
-        </Dropzone>
-    </div>
+    @if (shuffled.Count > 0)
+    {
+        <div class="grid">
+            @foreach (var t in shuffled)
+            {
+                <li class="draggable text-center" style="list-style-type:none;display:block;"><img src="@t.url" width="50" height="50" alt="Alternate Text" /></li>
+            }
+        </div>
+    }
+
 }
 
 
-@code{     
 
+@code{
 
+    Tile ti = new Tile();
+    Tile selectedTile = new Tile();
+    List<Tile> tilePool = new List<Tile>();
+    List<Tile> shuffled = new List<Tile>();
     GameBoard b;
     Boolean done = false;
-    List<string> urls = new List<string>();
+    string[] letters = { "BL", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "w", "x", "Y", "Z" };
+
+    //The num of tiles for the letter and the score value.
+    int[,] tilenums = {{2, 0 }, //Blank
+                    {9,1},  // A
+                    { 2, 3 },  // B
+                    { 2, 3 },
+                    { 4, 2 },
+                    { 12, 1 },
+                    { 2, 4 },
+                    { 3, 2 },
+                    { 2, 4 } ,
+                    { 9, 1 } ,
+                    { 1, 8 } ,
+                    { 1, 5 } ,
+                    { 4, 1 } ,
+                    { 2, 3 } ,
+                    { 6, 1 } ,
+                    { 8, 1 } ,
+                    { 2, 3 } ,
+                    { 1, 10 } ,
+                    { 6, 1 } ,
+                    { 4, 1 } ,
+                    { 6, 1 } ,
+                    { 4, 1 } ,
+                    { 2, 4 } ,
+                    { 2, 4 } ,
+                    { 1, 8 } ,
+                    { 2, 4 } ,
+                    { 1, 10 }   // Z
+
+                                };
+
+
 
     protected override void OnInitialized()
     {
-        //Console.WriteLine("inside initialize.");
         base.OnInitialized();
-        //b = new GameBoard(10);
-        done = true;
+        createTilePool();
+
     }
-    void makeImageList()
+    void createTilePool()
     {
-        string url = "images/A.svg";
-        urls.Add(url);
-        url = "images/B.svg";
-        urls.Add(url);
-        url = "images/C.svg";
-        urls.Add(url);
-        url = "images/BL.svg";
-        urls.Add(url);
+        try
+        {
+            for (int i = 0; i < letters.Length; i++)
+            {
+                string url = $"images/{letters[i]}.svg";
+                Console.WriteLine(url);
+                ti = new Tile(i, url, letters[i].ToString(), tilenums[i, 1], tilenums[i, 0]);
+
+            }
+
+            tilePool = Tile.tilePool; //tilePool is a static class variable not instance var
+            // Console.WriteLine(tilePool);
+            shuffled = Tile.ShufflePool();
+            done = true;
+            this.StateHasChanged();
+            Console.WriteLine(shuffled.Count);
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("ERROR:  ======>" + ex.Message.ToString());
+        }
 
 
     }

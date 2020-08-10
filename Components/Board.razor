@@ -1,62 +1,37 @@
 ﻿<h3>Board</h3>
-<div class="row">
-    <div class="col-8">
-        <table class="table-bordered">
-            @if (board != null)
-            {
+<div class="wrapper card shadow rounded">
+ 
+    @foreach (Cell c in myListCells)
+    {
+        <li class="cell droppable " dropzone="true" @ondrop="HandleDrop"
+            ondragover="event.preventDefault();"
+            ondragstart="event.dataTransfer.setData('',event.target.id);"
+            ondragenter="HandleDragEnter"
+            ondragleave="HandleDragLeave"
+            style="background-color:@c.color">@c.caption</li>
+    }
 
 
-                @for (int i = 0; i < board.numCellsPerSide; i++)
-                {
-                    <tr>
-                        @for (int j = 0; j < board.numCellsPerSide; j++)
-                        {
-                            @if (i == 7 && j == 7)
-                            {
-                                @*<Plk.Blazor.DragDrop.Dropzone Items="@board.">*@
-                                <td style="background-color:@board.cells[i,j].color" class="boldborder">@board.cells[i, j].caption</td>
-                                @*</Plk.Blazor.DragDrop.Dropzone>*@
-                            }
-                            else
-                            {
-                                @*<Plk.Blazor.DragDrop.Dropzone>*@
-                                <td style="background-color:@board.cells[i,j].color">@board.cells[i, j].caption</td>
-                                @*</Plk.Blazor.DragDrop.Dropzone>*@
-                            }
-
-                        }
-                    </tr>
-                }
-
-            }
-
-
-        </table>
-    </div>
-    <div class="col-4">
-        <ul>
-            <Dropzone Items="@myListCells">
-                <li>
-                    @context.caption
-                </li>
-            </Dropzone>
-        </ul>
-    </div>
 </div>
 <style>
-    td {
-        width: 50px;
-        height: 50px;
+    .wrapper {
+        display:grid;
+        max-width:770px;
+        max-height=770px;
+        padding:15px;
+        grid-template-rows: repeat(15 ,50px);
+        grid-template-columns:repeat(15,50px);
+        border:solid 3px #333;
+    
+        
+    }
+    .cell {
+        list-style-type:none;
+        border: solid black 1px;
         text-align: center;
+        vertical-align:central;
     }
-
-    .table-bordered {
-        border: solid black 2px !important;
-    }
-
-    .boldborder {
-        border: solid black 4px !important;
-    }
+    
 </style>
 
 @code {
@@ -80,7 +55,19 @@
             myListCells.Add(c);
         }
     }
-
+    private void HandleDrop()
+    {
+        //ev.dataTransfer.setData("text/plain", ev.target.innerText);
+        Console.WriteLine("something dropped here.");
+    }
+    private void HandleDragEnter()
+    {
+        Console.WriteLine("something enterred here.");
+    }
+    private void HandleDragLeave()
+    {
+        Console.WriteLine("something left here.");
+    }
 
 
 }

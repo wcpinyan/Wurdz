@@ -36,7 +36,7 @@ namespace Wurdz.Shared.Models
                     count++;
                     SetColor(cell);
                     cells[i, j] = cell;
-                    Console.WriteLine(i + "," + j + cell.color);
+                    //Console.WriteLine(i + "," + j + cell.color);
                 }
                 
                 
