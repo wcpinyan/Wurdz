@@ -20,7 +20,7 @@ namespace Wurdz
 
             builder.Services.AddTransient(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
             builder.Services.AddBlazorDragDrop();
-
+            builder.Services.AddSingleton<Wurdz.Shared.AppState>();
             await builder.Build().RunAsync();
         }
     }

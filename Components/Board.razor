@@ -1,23 +1,52 @@
-﻿<h3>Board</h3>
-<div class="wrapper card shadow rounded">
- 
-    @foreach (Cell c in myListCells)
-    {
-        <li class="cell droppable " dropzone="true" @ondrop="HandleDrop"
-            ondragover="event.preventDefault();"
-            ondragstart="event.dataTransfer.setData('',event.target.id);"
-            ondragenter="HandleDragEnter"
-            ondragleave="HandleDragLeave"
-            style="background-color:@c.color">@c.caption</li>
-    }
+﻿@using Plk.Blazor.DragDrop
 
+<div class="justify-content-center h1 align-self-center " >Wurdz</div>
+<div class="wrapper card shadow rounded droppable-elements">
+    @*<ul class="dropzone @dropClass"
+        ondragover="event.preventDefault();"
+        ondragstart="event.dataTransfer.setData('', event.target.id);"
+        @ondrop="HandleDrop"
+        @ondragenter="HandleDragEnter"
+        @ondragleave="HandleDragLeave">
+
+        @foreach (Cell c in myListCells)
+        {
+            <li>c.row</li>
+        }
+
+    </ul>*@
+    @*<Dropzone Items="myListCells">
+        <div style="width:55px;height:55px;border:2px solid black" Item="@context"></div>
+    </Dropzone>*@
+    @foreach (Wurdz.Shared.Models.Cell c in myListCells)
+        {
+            @if (c.row == 7 && c.col == 7)
+            {
+                <li class="cell droppable " droppable="true" @ondrop="HandleDrop"
+                    ondragover="event.preventDefault();"
+                    ondragstart="event.dataTransfer.setData('',event.target.id);"
+                    ondragenter="HandleDragEnter"
+                    ondragleave="HandleDragLeave"
+                    style="background-color:@c.color"><img src='images/star.png' style='width:40px;height:40px'>  </li>
+            }
+            else
+            {
+                <li class="cell droppable " droppable="true" @ondrop="HandleDrop"
+                    ondragover="event.preventDefault();"
+                    ondragstart="event.dataTransfer.setData('',event.target.id);"
+                    ondragenter="HandleDragEnter"
+                    ondragleave="HandleDragLeave"
+                    style="background-color:@c.color">@c.caption</li>
+                }
+        }
 
 </div>
 <style>
     .wrapper {
         display:grid;
-        max-width:770px;
-        max-height=770px;
+        max-width:785px;
+        max-height:785px;
+        background-color: antiquewhite;
         padding:15px;
         grid-template-rows: repeat(15 ,50px);
         grid-template-columns:repeat(15,50px);
@@ -39,6 +68,8 @@
     string title = "My Wurdz Game";
     string color;
     List<Cell> myListCells = new List<Cell>();
+    string urlString = "";
+    string dropClass="";
 
     GameBoard board = new GameBoard(numCells);
 
@@ -52,21 +83,44 @@
     {
         foreach (Cell c in @board.cells)
         {
+            if(c.row==7 && c.col == 7)
+            {
+
+                c.caption = "";
+                this.StateHasChanged();
+            }
+
             myListCells.Add(c);
+            urlString = "";
         }
     }
     private void HandleDrop()
     {
-        //ev.dataTransfer.setData("text/plain", ev.target.innerText);
+        // ev.DataTransfer.setData("text/plain", ev.target.innerText);
         Console.WriteLine("something dropped here.");
     }
     private void HandleDragEnter()
     {
+        dropClass = "can-drop";
         Console.WriteLine("something enterred here.");
     }
     private void HandleDragLeave()
     {
         Console.WriteLine("something left here.");
+    }
+
+    //============= the following came from https://chrissainty.com/investigating-drag-and-drop-with-blazor/
+
+    /// <summary>
+    /// Supplies information about an drag event that is being raised.
+    /// </summary>
+    public class DragEventArgs : MouseEventArgs
+    {
+        /// <summary>
+        /// The data that underlies a drag-and-drop operation, known as the drag data store.
+        /// See <see cref="DataTransfer"/>.
+        /// </summary>
+        public DataTransfer DataTransfer { get; set; }
     }
 
 

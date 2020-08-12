@@ -1,22 +1,46 @@
 ﻿@page "/"
 @using Wurdz.Shared.Models
+@inject AppState appState
+@inject IJSRuntime JSRuntime;
+@using Plk.Blazor.DragDrop
 
-<Wurdz.Components.Board />
-<br />
-@if (done)
-{
-    @if (shuffled.Count > 0)
+<div class="gridmain">
+    <div class="gridboard"> <Wurdz.Components.Board /></div>
+    <br />
+
+    @if (done)
     {
-        <div class="grid">
-            @foreach (var t in shuffled)
-            {
-                <li class="draggable text-center" style="list-style-type:none;display:block;"><img src="@t.url" width="50" height="50" alt="Alternate Text" /></li>
-            }
-        </div>
+        Console.WriteLine("appState player1times..." + appState.player1Tiles.Count);
+        @if (appState.player1Tiles.Count > 0)
+        {
+<div class="player1grid">
+
+    @foreach (var t in appState.player1Tiles)
+    {
+        <Draggable>
+            <li class=" text-center" style="list-style-type:none;display:block;"><img src="@t.url" width="50" height="50" alt="Alternate Text" /></li>
+        </Draggable>
+     
+      
+        Console.WriteLine("tile....." + t.letter);
     }
 
-}
+</div>
+        }
+        <div class="text-center bg-secondary text-white" style="grid-row:3;grid-column:1">P L A Y E R  1</div>
+        <br />
+        @if (shuffled.Count > 0)
+        {
+            <div class="grid">
+                @foreach (var t in shuffled)
+                {
+                    <li class="draggable text-center" draggable="true" style="list-style-type:none;display:block;"><img src="@t.url" width="50" height="50" alt="Alternate Text" /></li>
+                }
+            </div>
+        }
 
+    }
+</div>
 
 
 @code{
@@ -25,38 +49,42 @@
     Tile selectedTile = new Tile();
     List<Tile> tilePool = new List<Tile>();
     List<Tile> shuffled = new List<Tile>();
+    Player player1 = new Player();
+    Player player2 = new Player();
+    List<Tile> player1Tiles;
+    List<Tile> player2Tiles;
     GameBoard b;
     Boolean done = false;
     string[] letters = { "BL", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "w", "x", "Y", "Z" };
 
     //The num of tiles for the letter and the score value.
     int[,] tilenums = {{2, 0 }, //Blank
-                    {9,1},  // A
-                    { 2, 3 },  // B
-                    { 2, 3 },
-                    { 4, 2 },
-                    { 12, 1 },
-                    { 2, 4 },
-                    { 3, 2 },
-                    { 2, 4 } ,
-                    { 9, 1 } ,
-                    { 1, 8 } ,
-                    { 1, 5 } ,
-                    { 4, 1 } ,
-                    { 2, 3 } ,
-                    { 6, 1 } ,
-                    { 8, 1 } ,
-                    { 2, 3 } ,
-                    { 1, 10 } ,
-                    { 6, 1 } ,
-                    { 4, 1 } ,
-                    { 6, 1 } ,
-                    { 4, 1 } ,
-                    { 2, 4 } ,
-                    { 2, 4 } ,
-                    { 1, 8 } ,
-                    { 2, 4 } ,
-                    { 1, 10 }   // Z
+{9,1},  // A
+{ 2, 3 },  // B
+{ 2, 3 },
+{ 4, 2 },
+{ 12, 1 },
+{ 2, 4 },
+{ 3, 2 },
+{ 2, 4 } ,
+{ 9, 1 } ,
+{ 1, 8 } ,
+{ 1, 5 } ,
+{ 4, 1 } ,
+{ 2, 3 } ,
+{ 6, 1 } ,
+{ 8, 1 } ,
+{ 2, 3 } ,
+{ 1, 10 } ,
+{ 6, 1 } ,
+{ 4, 1 } ,
+{ 6, 1 } ,
+{ 4, 1 } ,
+{ 2, 4 } ,
+{ 2, 4 } ,
+{ 1, 8 } ,
+{ 2, 4 } ,
+{ 1, 10 }   // Z
 
                                 };
 
@@ -64,8 +92,29 @@
 
     protected override void OnInitialized()
     {
-        base.OnInitialized();
-        createTilePool();
+        try
+        {
+            base.OnInitialized();
+            player1.number = (int)PlayerNum.One;
+            player2.number = (int)PlayerNum.Two;
+            createTilePool();
+            ti.DrawInitialHands(appState.shuffledTiles, player1);
+            Console.WriteLine(Tile.player1Tiles.Count);
+            ti.DrawInitialHands(appState.shuffledTiles, player2);
+            Console.WriteLine(Tile.player2Tiles.Count);
+            appState.player1Tiles = Tile.player1Tiles;
+            appState.player2Tiles = Tile.player2Tiles;
+            done = true;
+            this.StateHasChanged();
+
+            //JSRuntime.InvokeVoidAsync("handleTickerChanged",
+            //  stockUpdate.symbol, stockUpdate.price);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error xyz: " + ex.Message);
+        }
+
 
     }
     void createTilePool()
@@ -81,10 +130,10 @@
             }
 
             tilePool = Tile.tilePool; //tilePool is a static class variable not instance var
-            // Console.WriteLine(tilePool);
+                                      // Console.WriteLine(tilePool);
             shuffled = Tile.ShufflePool();
-            done = true;
-            this.StateHasChanged();
+            appState.shuffledTiles = shuffled;
+
             Console.WriteLine(shuffled.Count);
 
         }
