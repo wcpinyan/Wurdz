@@ -228,17 +228,7 @@ body {
     /*margin: 2rem;*/
 }
 
-.draggable {
-    /*height: 5rem;
-    width: 5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 4rem;
-    margin: 0rem 0.5rem;*/
-    cursor: move;
-    transition: opacity 0.2s;
-}
+
 
     .draggable:hover {
         opacity: 0.5;
@@ -320,6 +310,7 @@ body {
     color: #ffffff;
     border-radius: 5px;
     width: 250px;
+    transition: opacity 0.2s;
 }
 
     .draggable:active {
