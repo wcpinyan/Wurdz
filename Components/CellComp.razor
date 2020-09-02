@@ -1,16 +1,28 @@
 ﻿@using Wurdz.Shared.Models
 
-<div class="" style="border: 2px solid black;">
-   
-    @Item
+    <div class="cell" style="border: 2px solid black;">
 
-</div>
+
+        @if (HasTile)
+        {
+            @currentTile
+        }
+        else
+        {
+            @Item
+        }
+
+    </div>
 
 
 @code {
 
     [Parameter]
-    public Wurdz.Shared.Models.Cell Item { get; set; }
+    public Cell Item { get; set; }
+    [Parameter]
+    public Tile currentTile { get; set; }
+    [Parameter]
+    public bool HasTile { get; set; }
 
     @*[Parameter]
     public EventCallback<TodoItem> OnRemoveClick { get; set; }*@

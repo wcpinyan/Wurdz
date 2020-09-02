@@ -10,26 +10,23 @@
 
     @if (done)
     {
-        Console.WriteLine("appState player1times..." + appState.player1Tiles.Count);
         @if (appState.player1Tiles.Count > 0)
         {
-<div class="player1grid">
+<ul class="player1grid">
 
     @foreach (var t in appState.player1Tiles)
     {
-        <Draggable>
-            <li class=" text-center" style="list-style-type:none;display:block;"><img src="@t.url" width="50" height="50" alt="Alternate Text" /></li>
-        </Draggable>
-     
-      
+        <li class="draggable text-center" draggable="true" style="list-style-type:none;display:block;" @ondragstart="@(() => HandleDragStart(@t))"><img src="@t.url" width="50" height="50" alt="Alternate Text" /></li>
+
+
         Console.WriteLine("tile....." + t.letter);
     }
 
-</div>
+</ul>
         }
         <div class="text-center bg-secondary text-white" style="grid-row:3;grid-column:1">P L A Y E R  1</div>
         <br />
-        @if (shuffled.Count > 0)
+        @*@if (shuffled.Count > 0)
         {
             <div class="grid">
                 @foreach (var t in shuffled)
@@ -37,7 +34,7 @@
                     <li class="draggable text-center" draggable="true" style="list-style-type:none;display:block;"><img src="@t.url" width="50" height="50" alt="Alternate Text" /></li>
                 }
             </div>
-        }
+        }*@
 
     }
 </div>
@@ -143,6 +140,12 @@
         }
 
 
+    }
+    private void HandleDragStart(Tile selectedTile)
+    {
+        appState.selectedTile = selectedTile;
+        Console.WriteLine("Player is dragging " + selectedTile);
+        //Container.Payload = selectedTile;
     }
 
 

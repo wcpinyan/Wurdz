@@ -11,5 +11,6 @@ namespace Wurdz.Shared
         public List<Tile>  shuffledTiles { get; set; }
         public List<Tile> player1Tiles { get; set; }
         public List<Tile> player2Tiles { get; set; }
+        public Tile selectedTile { get; set; }
     }
 }
