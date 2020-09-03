@@ -6,13 +6,10 @@ using System.Threading.Tasks;
 
 namespace Wurdz.Shared.Models
 {
-    public class GameBoard
+    public class GameBoardModel
     {
-        public GameBoard()
-        {
-            
-        }
-        public GameBoard(int _numCellsPerSide)
+       
+        public GameBoardModel(int _numCellsPerSide)
         {
             int count = 0;
             numCellsPerSide = _numCellsPerSide;
@@ -125,12 +122,12 @@ namespace Wurdz.Shared.Models
                     c.color = "white";
                     return;
                 }
-                if ((c.row == 0 || c.row == 7 || c.row == 14) && (c.col == 0 || c.col == 7 || c.col == 14))
-                {
-                    c.caption = "DW";
-                    c.color = "red";
-                    return;
-                }
+                // if ((c.row == 0 || c.row == 7 || c.row == 14) && (c.col == 0 || c.col == 7 || c.col == 14))
+                // {
+                //     c.caption = "DW";
+                //     c.color = "red";
+                //     return;
+                // }
             }
 
         }
@@ -138,8 +135,10 @@ namespace Wurdz.Shared.Models
         public string title { get; set; }
         public int numCellsPerSide { get; set; }
         public Cell[,] cells { get; set; }
+        public int CurrentRow { get; set; }
+        public int CurrentCol { get; set; }
 
-       
+
     }
     public class Cell
     {

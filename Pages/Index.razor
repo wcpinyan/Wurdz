@@ -3,55 +3,59 @@
 @inject AppState appState
 @inject IJSRuntime JSRuntime;
 @using Plk.Blazor.DragDrop
+@using Wurdz.Components
 
+ <div class="row">
+        <Players players=@players></Players>
+    </div>
 <div class="gridmain">
     <div class="gridboard"> <Wurdz.Components.Board /></div>
     <br />
-
-    @if (done)
+   
+    
+  @if (done)
     {
         @if (appState.player1Tiles.Count > 0)
         {
-<ul class="player1grid">
+            <ul class="player1grid">
 
-    @foreach (var t in appState.player1Tiles)
-    {
-        <li class="draggable text-center" draggable="true" style="list-style-type:none;display:block;" @ondragstart="@(() => HandleDragStart(@t))"><img src="@t.url" width="50" height="50" alt="Alternate Text" /></li>
+                @foreach (var t in appState.player1Tiles)
+                {
+                    <TileComponent item=t activePlayer=@player1
+                    OnDrop="( async()=> await UpdatePlayerHand(t))"></TileComponent>
+                    @* OnDrop="(async ()=> await UpdatePlayerHand(t))"></TileComponent> *@
 
 
-        Console.WriteLine("tile....." + t.letter);
-    }
+                    @* Console.WriteLine("tile....." + t.letter); *@
+                }
 
-</ul>
+            </ul>
         }
         <div class="text-center bg-secondary text-white" style="grid-row:3;grid-column:1">P L A Y E R  1</div>
         <br />
-        @*@if (shuffled.Count > 0)
-        {
-            <div class="grid">
-                @foreach (var t in shuffled)
-                {
-                    <li class="draggable text-center" draggable="true" style="list-style-type:none;display:block;"><img src="@t.url" width="50" height="50" alt="Alternate Text" /></li>
-                }
-            </div>
-        }*@
-
+        <div class="btn-group role=group" style="grid-row:4;grid-column:1">
+            <button type="button" style="height:40px;width:50px" class="m-3 btn btn-success btn-small">Score Word</button>
+            <button type="button"  style="height:40px;width:50px"  class="m-3 btn btn-success">Challenge Opponent</button>
+            <button type="button"  style="height:40px;width:50px"  class="m-3 btn btn-success">Draw Tiles</button>
+        </div>
     }
-</div>
-
+</div>  
 
 @code{
 
-    Tile ti = new Tile();
-    Tile selectedTile = new Tile();
-    List<Tile> tilePool = new List<Tile>();
-    List<Tile> shuffled = new List<Tile>();
-    Player player1 = new Player();
-    Player player2 = new Player();
-    List<Tile> player1Tiles;
-    List<Tile> player2Tiles;
-    GameBoard b;
+    TileModel ti = new TileModel();
+    TileModel selectedTile = new TileModel();
+    List<TileModel> tilePool = new List<TileModel>();
+    List<TileModel> shuffled = new List<TileModel>();
+    List<PlayerModel> players=new List<PlayerModel>();
+    PlayerModel player1 = new PlayerModel();
+    PlayerModel player2 = new PlayerModel();
+    List<TileModel> player1Tiles;
+    List<TileModel> player2Tiles;
+    GameBoardModel b;
+    List<TileModel> currentWord=new List<TileModel>();
     Boolean done = false;
+    [Parameter] public EventCallback OnUpdate {get;set;}
     string[] letters = { "BL", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "w", "x", "Y", "Z" };
 
     //The num of tiles for the letter and the score value.
@@ -94,13 +98,19 @@
             base.OnInitialized();
             player1.number = (int)PlayerNum.One;
             player2.number = (int)PlayerNum.Two;
+            player1.userName = "Joe";
+            player2.userName = "Jill";
+            players.Add(player1);
+            players.Add(player2);
+            Console.WriteLine(players[0].userName);
+            Console.WriteLine("players count: "+players.Count());
             createTilePool();
             ti.DrawInitialHands(appState.shuffledTiles, player1);
-            Console.WriteLine(Tile.player1Tiles.Count);
+            @* Console.WriteLine(TileModel.player1Tiles.Count); *@
             ti.DrawInitialHands(appState.shuffledTiles, player2);
-            Console.WriteLine(Tile.player2Tiles.Count);
-            appState.player1Tiles = Tile.player1Tiles;
-            appState.player2Tiles = Tile.player2Tiles;
+            @* Console.WriteLine(TileModel.player2Tiles.Count); *@
+            appState.player1Tiles = TileModel.player1Tiles;
+            appState.player2Tiles = TileModel.player2Tiles;
             done = true;
             this.StateHasChanged();
 
@@ -114,6 +124,13 @@
 
 
     }
+    public async Task UpdatePlayerHand(TileModel t){
+        Console.WriteLine("inside updateplayerhand.");
+        appState.player1Tiles.Remove(t);
+        Console.WriteLine("left in hand: "+appState.player1Tiles.Count());
+        await OnUpdate.InvokeAsync(null);
+       
+    }
     void createTilePool()
     {
         try
@@ -121,17 +138,19 @@
             for (int i = 0; i < letters.Length; i++)
             {
                 string url = $"images/{letters[i]}.svg";
-                Console.WriteLine(url);
-                ti = new Tile(i, url, letters[i].ToString(), tilenums[i, 1], tilenums[i, 0]);
+                @* Console.WriteLine(url); *@
+                ti = new TileModel(i, url, letters[i].ToString(), tilenums[i, 1], tilenums[i, 0]);
 
             }
 
-            tilePool = Tile.tilePool; //tilePool is a static class variable not instance var
-                                      // Console.WriteLine(tilePool);
-            shuffled = Tile.ShufflePool();
+            tilePool = TileModel.tilePool; //tilePool is a static class variable not instance var
+                                           // Console.WriteLine(tilePool);
+            shuffled = TileModel.ShufflePool();
             appState.shuffledTiles = shuffled;
 
-            Console.WriteLine(shuffled.Count);
+            @* Console.WriteLine(shuffled.Count); *@
+            
+          
 
         }
         catch (Exception ex)
@@ -141,12 +160,7 @@
 
 
     }
-    private void HandleDragStart(Tile selectedTile)
-    {
-        appState.selectedTile = selectedTile;
-        Console.WriteLine("Player is dragging " + selectedTile);
-        //Container.Payload = selectedTile;
-    }
+    
 
 
 }

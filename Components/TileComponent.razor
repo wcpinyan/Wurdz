@@ -1,7 +1,27 @@
-﻿<div class="can-drop">
+﻿@inject AppState appState;
+<li class="draggable text-center" draggable="true" 
+style="list-style-type:none;display:block;" 
+@ondragend="HandleDrop" 
+@ondragstart="@(() => HandleDragStart(@item))">
+<img src="@item.url" width="50" height="50" alt="Alternate Text" />
+</li>
 
-</div>
 
 @code {
-    Tile currenttile;
+    [Parameter] public TileModel item{get;set;}
+    [Parameter] public PlayerModel activePlayer{get;set;}
+    [Parameter] public EventCallback OnDrop { get; set; }
+    private async Task HandleDrop()
+    {
+        
+        await OnDrop.InvokeAsync(this);
+    }
+    private void HandleDragStart(TileModel selectedTile)
+    {
+        
+        appState.selectedTile = item;
+        Console.WriteLine("Player is dragging " + item.letter);
+        
+        //Container.Payload = selectedTile;
+    }
 }

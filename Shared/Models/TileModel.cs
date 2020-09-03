@@ -10,18 +10,18 @@ using System.Threading.Tasks;
 namespace Wurdz.Shared.Models
 {
 
-    public class Tile
+    public class TileModel
     {
-        public static List<Tile> tilePool { get; set; } = new List<Tile>();
-        public static List<Tile> shuffled { get; set; } = new List<Tile>();
+        public static List<TileModel> tilePool { get; set; } = new List<TileModel>();
+        public static List<TileModel> shuffled { get; set; } = new List<TileModel>();
 
         private static int count=0;
         private static int countDealt = 0;
-        public Tile()
+        public TileModel()
         {
 
         }
-        public Tile(
+        public TileModel(
                     int id,
                     string _url,
                     string _letter,
@@ -42,14 +42,16 @@ namespace Wurdz.Shared.Models
         public int numInPool { get; set; }
         public int? dropCol { get; set; }
         public int? dropRow { get; set; }
+        public int assignedTo { get; set; } //Player number this tile is dealt to.
+        public Cell cellDroppedOn{get;set;}
 
 
-        public static List<Tile> player1Tiles { get; set; } = new List<Tile>();
-        public static List<Tile> player2Tiles { get; set; } = new List<Tile>();
-        public static List<Tile> player3Tiles { get; set; } = new List<Tile>();
-        public static List<Tile> player4Tiles { get; set; } = new List<Tile>();
+        public static List<TileModel> player1Tiles { get; set; } = new List<TileModel>();
+        public static List<TileModel> player2Tiles { get; set; } = new List<TileModel>();
+        public static List<TileModel> player3Tiles { get; set; } = new List<TileModel>();
+        public static List<TileModel> player4Tiles { get; set; } = new List<TileModel>();
 
-        void BuildTilePool(Tile t)
+        void BuildTilePool(TileModel t)
         {
             try
             {
@@ -59,7 +61,7 @@ namespace Wurdz.Shared.Models
                 {
                     count++;
                     t.id = count;
-                    Console.WriteLine("tile: " + t.id);
+                    // Console.WriteLine("tile: " + t.id);
                     tilePool.Add(t);
                     ;
                 }
@@ -74,7 +76,7 @@ namespace Wurdz.Shared.Models
                 count = 0;
             }
         }
-        public static List<Tile> ShufflePool()
+        public static List<TileModel> ShufflePool()
         {
             try
             {
@@ -95,23 +97,24 @@ namespace Wurdz.Shared.Models
 
         }
 
-        public void DrawInitialHands(List<Tile> shuffledtiles,Player player)
+        public void DrawInitialHands(List<TileModel> shuffledtiles,PlayerModel player)
         {
             try
             {
-                Console.WriteLine("player1 num: " + player.number);
-                Console.WriteLine("shuffled count: " + shuffledtiles.Count);
+                Console.WriteLine("player num: " + player.number);
+                Console.WriteLine("player name: "+player.userName);
+                // Console.WriteLine("shuffled count: " + shuffledtiles.Count);
 
                 switch (player.number)
                 {
                     case (int)PlayerNum.One:
                         player1Tiles.Clear();
                         for (int i = 0; i < 7; i++)
-                        {
-                           
-                            Console.WriteLine("shuffled[i]: "+ shuffledtiles[i]);
+                        { 
+                            // Console.WriteLine("shuffled[i]: "+ shuffledtiles[i]);
+                            shuffledtiles[i].assignedTo=(int)PlayerNum.One;
                             player1Tiles.Add(shuffledtiles[i]); //get each tile starting with the 1st 7 tiles left in shuffled   
-                            Console.WriteLine(player1Tiles.Count);
+                        
                             countDealt++;
                         }
                         break;
@@ -121,6 +124,7 @@ namespace Wurdz.Shared.Models
                         {
                           
                             player2Tiles.Add(shuffledtiles[i]); //get each tile starting with the 1st 7 tiles left in shuffled   
+                            player2Tiles[i].assignedTo=(int)PlayerNum.Two;
                             countDealt++;
                         }
                         break;
@@ -130,6 +134,7 @@ namespace Wurdz.Shared.Models
                         {
                             
                             player3Tiles.Add(shuffledtiles[i]); //get each tile starting with the 1st 7 tiles left in shuffled   
+                            player3Tiles[i].assignedTo=(int)PlayerNum.Three;
                             countDealt++;
                         }
                         break;
@@ -139,6 +144,7 @@ namespace Wurdz.Shared.Models
                         {
                            
                             player4Tiles.Add(shuffledtiles[i]); //get each tile starting with the 1st 7 tiles left in shuffled   
+                           player4Tiles[i].assignedTo=(int)PlayerNum.Four;
                             countDealt++;
                         }
                         break;
@@ -149,10 +155,10 @@ namespace Wurdz.Shared.Models
 
                 }
            
-                Console.WriteLine("shuffled count: " + shuffledtiles.Count);
+                // Console.WriteLine("shuffled count: " + shuffledtiles.Count);
                 //in the "for" loop above...we can't take out any untill the add op is complete.               
                 shuffledtiles.RemoveRange(0, 7);
-                Console.WriteLine("shuffled count: " + shuffledtiles.Count);
+                // Console.WriteLine("shuffled count: " + shuffledtiles.Count);
             }
             catch (Exception ex)
             {

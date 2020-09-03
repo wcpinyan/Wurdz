@@ -1,0 +1,17 @@
+﻿
+@if(players !=null)
+{    
+    <h3>Players List</h3>
+    <br/>       
+    <ul class="list-group m-2">
+            @foreach(var player in players){
+        <li class="list-group-item" >
+            @player.number: @player.userName
+        </li>           
+        }
+    </ul>    
+}
+
+@code {
+    [Parameter] public List<PlayerModel> players { get; set; }
+}

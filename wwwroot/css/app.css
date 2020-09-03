@@ -188,7 +188,7 @@ app {
 }
 .gridmain {
     display: grid;   
-    grid-template-rows:840px 1fr 30px 2fr ;
+    grid-template-rows:840px 1fr 30px 30px;
     grid-template-columns: 800px 1fr;
 }
 .gridshuffled{

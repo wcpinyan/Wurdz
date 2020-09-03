@@ -5,17 +5,18 @@ using System.Threading.Tasks;
 
 namespace Wurdz.Shared.Models
 {
-    public class Player
+    public class PlayerModel
     {
         public int id { get; set; }
         public int number { get; set; }
+        public bool isActive { get; set; }
         public string userName { get; set; }
         public int gamePoints { get; set; }
         public int numGamesPlayed { get; set; }
         public int numGamesWon { get; set; }
         public int rank { get; set; }
 
-        public List<Tile> hand { get; set; }
+        public List<TileModel> hand { get; set; }
     }
     public enum PlayerNum:int
     {
