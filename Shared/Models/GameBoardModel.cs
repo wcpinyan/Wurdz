@@ -11,7 +11,7 @@ namespace Wurdz.Shared.Models
        
         public GameBoardModel(int _numCellsPerSide)
         {
-            int count = 0;
+            
             numCellsPerSide = _numCellsPerSide;
             title = "Hello Wurdz";
             cells = new Cell[numCellsPerSide, numCellsPerSide];
@@ -23,14 +23,6 @@ namespace Wurdz.Shared.Models
                     Cell cell = new Cell();
                     cell.row = i;
                     cell.col = j;
-                    if (i == 7 && j == 7)
-                    {
-                        cell.color = "pink";
-                        cell.caption = "X";
-                    }
-
-
-                    count++;
                     SetColor(cell);
                     cells[i, j] = cell;
                     //Console.WriteLine(i + "," + j + cell.color);
@@ -47,7 +39,7 @@ namespace Wurdz.Shared.Models
                 {
                     if (c.row == rowCount)
                     {
-                        if (c.color == "white") //other primary color has not been placed in this square, so give it pink if appropriate
+                        if (c.color == "whitesmoke") //other primary color has not been placed in this square, so give it pink if appropriate
                         {
                             //if(c.col==7 && c.row == 7) //this is white center piece so skip
                             //{
@@ -55,8 +47,10 @@ namespace Wurdz.Shared.Models
                             //}
                             if (c.col == rowCount || c.col == numCellsPerSide - rowCount - 1)
                             {
+                                c.isWordMultiplier=true;
                                 c.color = "pink";
                                 c.caption = "DW";
+                                c.multiplyer=2;
                             }
                         }
                     }
@@ -80,13 +74,15 @@ namespace Wurdz.Shared.Models
                 if (c.row == 7 && c.col == 7)
                 {
                     c.caption = "X";
-                    c.color = "white";
+                    c.color = "pink";
                     return;
                 }
                 if ((c.row == 0 || c.row == 7 || c.row == 14) && (c.col == 0 || c.col == 7 || c.col == 14))
                 {
+                    c.isWordMultiplier=true;
                     c.caption = "TW";
                     c.color = "red";
+                    c.multiplyer=3;
                     return;
                 }
                 if ((c.row == 0 && (c.col == 3 || c.col == 11)) ||
@@ -106,26 +102,38 @@ namespace Wurdz.Shared.Models
                 {
                     c.caption = "DL";
                     c.color = "lightblue";
+                    c.multiplyer=2;
                     return;
                 }
               
-                    if (((c.row == 1 || c.row==13) && (c.col == 5 || c.col == 9)) ||
-                     ((c.row == 5 || c.row == 9 ) && (c.col == 1 || c.col == 5 || c.col==9 || c.col==13)))
-                 
+                if (((c.row == 1 || c.row==13) && (c.col == 5 || c.col == 9)) ||
+                    ((c.row == 5 || c.row == 9 ) && (c.col == 1 || c.col == 5 || c.col==9 || c.col==13)))
+                
+                {
+                    c.caption = "TL";
+                    c.color = "steelblue";
+                    c.multiplyer=3;
+                    return;
+                }
+                if (c.row == 7 && c.col == 7)
                     {
-                        c.caption = "TL";
-                        c.color = "steelblue";
+                        c.color = "pink";
+                        c.caption = "X";
                         return;
                     }
-                    else { 
+                else { 
                     c.caption = "";
-                    c.color = "white";
+                    c.color = "whitesmoke";
+                    c.multiplyer=1;
                     return;
+                
                 }
                 // if ((c.row == 0 || c.row == 7 || c.row == 14) && (c.col == 0 || c.col == 7 || c.col == 14))
                 // {
+                //     c.isWordMultiplier=true;
                 //     c.caption = "DW";
                 //     c.color = "red";
+                //     c.multiplyer=2;
                 //     return;
                 // }
             }
@@ -137,6 +145,8 @@ namespace Wurdz.Shared.Models
         public Cell[,] cells { get; set; }
         public int CurrentRow { get; set; }
         public int CurrentCol { get; set; }
+        public bool GameOver { get; set; }
+        public PlayerModel activePlayer { get; set; }
 
 
     }
@@ -149,5 +159,6 @@ namespace Wurdz.Shared.Models
         public int row { get; set; }
         public string color { get; set; }
         public  int multiplyer { get; set; }
+        public bool isWordMultiplier { get; set; }
     }
 }

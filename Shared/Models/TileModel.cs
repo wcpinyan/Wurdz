@@ -36,7 +36,8 @@ namespace Wurdz.Shared.Models
             BuildTilePool(this);
         }
         public int id { get; set; }
-        public string url { get; set; }
+        public string url { get; set; } //path to the given tile image(the image is the tile gui)
+        public string borderColor { get; set; }="black";
         public string letter { get; set; }
         public int pointValue { get; set; }
         public int numInPool { get; set; }

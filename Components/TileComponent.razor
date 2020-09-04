@@ -3,7 +3,7 @@
 style="list-style-type:none;display:block;" 
 @ondragend="HandleDrop" 
 @ondragstart="@(() => HandleDragStart(@item))">
-<img src="@item.url" width="50" height="50" alt="Alternate Text" />
+<img style="border: 1px solid @item.borderColor" src="@item.url" width="30" height="30" alt="Scrabble tile piece" />
 </li>
 
 
@@ -18,7 +18,7 @@ style="list-style-type:none;display:block;"
     }
     private void HandleDragStart(TileModel selectedTile)
     {
-        
+        item.borderColor="red";
         appState.selectedTile = item;
         Console.WriteLine("Player is dragging " + item.letter);
         

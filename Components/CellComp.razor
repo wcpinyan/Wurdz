@@ -1,6 +1,6 @@
 ﻿@using Wurdz.Shared.Models
 @inject AppState appState
-    <div class="cell @dropClass" style="border: 2px solid black;"
+    <div class="cell @dropClass"
         @ondrop="HandleDrop"
         ondragover="event.preventDefault();"
         ondragstart="event.dataTransfer.setData('',event.target.id);"                
@@ -11,7 +11,7 @@
         @if (HasTile)
         {
             
-          <img src="@currentTile.url" width="48" height="48" alt="Alternate Text" />
+          <img style="border:.1em solid @currentTile.borderColor" src="@currentTile.url" width="48" height="48" alt="Alternate Text" />
         }
         else
         {
