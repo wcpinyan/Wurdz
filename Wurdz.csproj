@@ -7,6 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Shared\AppState.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="Pages\Boardtest.razor" />
     <Content Remove="wwwroot\js\dragdrop.js" />
   </ItemGroup>
 
@@ -25,6 +30,12 @@
   <ItemGroup>
     <Folder Include="Services\" />
     <Folder Include="wwwroot\js\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="wwwroot\images\star.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>

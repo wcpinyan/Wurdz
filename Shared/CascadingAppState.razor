@@ -1,0 +1,68 @@
+﻿<CascadingValue Value="this">
+    @ChildContent
+</CascadingValue>
+
+@code {
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    private List<TileModel> _shuffledTiles;
+
+    public List<TileModel> shuffledTiles
+    {
+        get { return _shuffledTiles; }
+        set { _shuffledTiles = value;
+            StateHasChanged();
+        }
+    }
+    private List<TileModel> _player1Models;
+
+    public List<TileModel> player1Tiles
+    {
+        get { return _player1Models; }
+        set { _player1Models = value;
+            StateHasChanged();
+        }
+    }
+    private List<TileModel> _player2Models;
+
+    public List<TileModel> player2Tiles
+    {
+        get { return _player2Models; }
+        set
+        {
+            _player2Models = value;
+            StateHasChanged();
+        }
+    }
+    private TileModel _selectedTile;
+
+    public TileModel selectedTile
+    {
+        get { return _selectedTile; }
+        set { _selectedTile = value;
+            StateHasChanged();
+        }
+    }
+    private List<Cell> _boardCells;
+
+    public List<Cell> boardCells
+    {
+        get { return _boardCells; }
+        set { _boardCells = value;
+            StateHasChanged();
+        }
+    }
+    private Cell _selectedCell;
+
+    public Cell selectedCell
+    {
+        get { return _selectedCell; }
+        set { _selectedCell = value;
+            StateHasChanged();
+        }
+    }
+
+
+
+}

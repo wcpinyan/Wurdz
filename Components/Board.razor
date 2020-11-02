@@ -2,53 +2,76 @@
 @inject AppState appState
 
 <div class="justify-content-center h1 align-self-center ">Wurdz</div>
-<ul class="wrapper ">
-   
-
-    @foreach (Cell c in myListCells)
+<div class="@dropClass grid "
+     @ondrop="HandleDrop"
+     ondragover="event.preventDefault();"
+     ondragstart="event.dataTransfer.setData('',event.target.id);"
+     @ondragenter="HandleDragEnter"
+     @ondragleave="HandleDragLeave">
+    @if (myListCells != null)
     {
-        @if (c.row == 7 && c.col == 7)
+
+        @foreach (Cell c in myListCells)
         {
-            Console.WriteLine("inside STAR");
-            <CellComp Item=c 
-            image='../images/star.png' 
-            HasTile="board.CurrentRow==c.row && board.CurrentCol ==c.col"
-            OnDrop="(async ()=> await UpdateBoardModel(c.row,c.col))"
-             ></CellComp>
-            
-        }
-        else
-        {
-            <CellComp Item=c
-            OnDrop="(async ()=> await UpdateBoardModel(c.row,c.col))"
-            ></CellComp>
+            @if (c.row == 7 && c.col == 7)
+            {
+                Console.WriteLine("inside STAR");
+                <CellComp Item=c
+                          image='../images/star.png'
+                          HasTile="board.CurrentRow==c.row && board.CurrentCol ==c.col"
+                          OnDrop="(async ()=> await UpdateBoardModel(c.row,c.col))"></CellComp>
+
             }
+            else
+            {
+                <CellComp Item=c
+                          OnDrop="(async ()=> await UpdateBoardModel(c.row,c.col))"></CellComp>
+            }
+
+
+            @*@if (HasTile)
+            {
+
+                <img style="border:.1em solid @currentTile.borderColor" src="@currentTile.url" width="48" height="48" alt="Alternate Text" />
+            }
+            else
+            {
+                <div style="background-color:@Item.color;align-content:center;--aspect-ratio: 1/1;">
+                    @if (image != "")
+                    {<img src=@image>}
+                    @Item.caption
+                </div>
+            }*@
+
+
+        }
     }
 
-</ul>
-<style>
-    .wrapper {
-        display: grid;
-        max-width: 75%;
-        max-height: 75%;
-        background-color: antiquewhite;
-        padding: 15px;
-        grid-template-rows: repeat(15,1fr);
-        grid-template-columns: repeat(15,1fr);
-        border: solid 3px #333;
-    }
+</div>
+ <style>
+     .grid {
+         display: grid;
+         /* grid-template-columns: 1fr 1fr 1fr;*/
+         grid-template-rows: repeat(15,1fr);
+         grid-template-columns: repeat(15,1fr);
+         height: 80%;
+         width: 80%;
+     }
 
-    .cell {
-        list-style-type: none;
-        border: solid #555 0.1em;
-        text-align: center;
-        vertical-align: central;
-        width:100%;
-        height:100%;
-        @* width:40px;
-        height:40px; *@
-    }
-</style>
+         .grid > * {
+             background: orange;
+             width: 100%;
+             border: solid black 1px;
+         }
+
+         .grid > [style^='--aspect-ratio']::before {
+             content: "";
+             display: inline-block;
+             width: 1px;
+             /*height: 0;*/
+             padding-bottom: calc(100% / (var(--aspect-ratio)));
+         }
+ </style>
 
 @code {
     static int numCells = 15;
@@ -59,13 +82,22 @@
     string urlString = "";
     string dropClass = "";
 
-    [Parameter] public GameBoardModel board {get;set;}=new GameBoardModel(numCells);
-    [Parameter] public EventCallback OnUpdate{get;set;}
+    public Cell Item { get; set; }
+    public TileModel currentTile { get; set; }
+    public bool HasTile { get; set; } = false;
+    public PlayerModel activePlayer{get;set;}
+    public string image { get; set; } = "";
+    [Parameter] public GameBoardModel board { get; set; } = new GameBoardModel(numCells);
+    [Parameter] public EventCallback OnUpdate { get; set; }
+
+
+
+
     public async Task UpdateBoardModel(int row,int col){
         board.CurrentRow=row;
         board.CurrentRow=col;
         await OnUpdate.InvokeAsync(null);
-       
+
     }
     protected override void OnInitialized()
     {
@@ -88,6 +120,45 @@
             myListCells.Add(c);
             urlString = "";
         }
+    }
+
+
+    private void HandleDrop()
+    {
+        dropClass="";
+        HasTile=true;
+        appState.selectedTile.cellDroppedOn=Item;
+        currentTile = appState.selectedTile;
+        @* Console.WriteLine("assigned to: "+currentTile.assignedTo); *@
+        
+        //TODO: put other players here
+    }
+  
+    private void HandleDragEnter()
+    {
+        dropClass="can-drop";
+        //Console.WriteLine("Data transfer item" + e.GetType());
+        //Console.WriteLine("Data transfer item" + e.DataTransfer.Items[0]);
+        Console.WriteLine("hadle drag enter");
+    }
+    private void HandleDragLeave()
+    {
+        dropClass = "";
+        Console.WriteLine("something left here.");
+    }
+
+    //============= the following came from https://chrissainty.com/investigating-drag-and-drop-with-blazor/
+
+    /// <summary>
+    /// Supplies information about an drag event that is being raised.
+    /// </summary>
+    public class DragEventArgs : MouseEventArgs
+    {
+        /// <summary>
+        /// The data that underlies a drag-and-drop operation, known as the drag data store.
+        /// See <see cref="DataTransfer"/>.
+        /// </summary>
+        public DataTransfer DataTransfer { get; set; }
     }
    
 

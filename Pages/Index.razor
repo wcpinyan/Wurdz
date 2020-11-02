@@ -17,7 +17,7 @@
         }
     </div>
 <div class="gridmain">
-    <div class="gridboard"> <Wurdz.Components.Board /></div>
+    <div > <Wurdz.Components.Board /></div>
     <br />
    
     
@@ -130,7 +130,7 @@
 
 
 }
-public async Task UpdatePlayerHand(TileModel t){
+public async Task UpdatePlayerHand(TileModel t,Cell c){
     currentWord.Add(t);
     if(t.cellDroppedOn.isWordMultiplier){
 

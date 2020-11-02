@@ -1,25 +1,20 @@
 ﻿@using Wurdz.Shared.Models
 @inject AppState appState
-    <div class="cell @dropClass"
-        @ondrop="HandleDrop"
-        ondragover="event.preventDefault();"
-        ondragstart="event.dataTransfer.setData('',event.target.id);"                
-        @ondragenter="HandleDragEnter"
-        @ondragleave="HandleDragLeave">
+   
 
 
         @if (HasTile)
         {
             
-          <img style="border:.1em solid @currentTile.borderColor" src="@currentTile.url" width="48" height="48" alt="Alternate Text" />
+          <img style="border:.1em solid @currentTile.borderColor" src="@currentTile.url"  alt="Alternate Text" />
         }
         else
         {
-            <li class="cell" style="background-color:@Item.color;align-content:center">
+            <div style="background-color:@Item.color;align-content:center;">
                 @if(image!=""){<img src= @image>} 
-                @Item.caption</li>            
+                @Item.caption</div>            
         }
-    </div>
+   
 
 
 @code {
@@ -30,42 +25,42 @@
     [Parameter] public bool HasTile { get; set; }
     [Parameter] public PlayerModel activePlayer{get;set;}
     [Parameter] public EventCallback<Cell> OnDrop { get; set; }
- private void HandleDrop()
+    private void HandleDrop()
     {
         dropClass="";
         HasTile=true;
         appState.selectedTile.cellDroppedOn=Item;
         currentTile = appState.selectedTile;
         @* Console.WriteLine("assigned to: "+currentTile.assignedTo); *@
-        
+
         //TODO: put other players here
     }
-  
-    private void HandleDragEnter()
-    {
-        dropClass="can-drop";
-        //Console.WriteLine("Data transfer item" + e.GetType());
-        //Console.WriteLine("Data transfer item" + e.DataTransfer.Items[0]);
-        Console.WriteLine("hadle drag enter");
-    }
-    private void HandleDragLeave()
-    {
-        dropClass = "";
-        Console.WriteLine("something left here.");
-    }
 
-    //============= the following came from https://chrissainty.com/investigating-drag-and-drop-with-blazor/
+    //private void HandleDragEnter()
+    //{
+    //    dropClass="can-drop";
+    //    //Console.WriteLine("Data transfer item" + e.GetType());
+    //    //Console.WriteLine("Data transfer item" + e.DataTransfer.Items[0]);
+    //    Console.WriteLine("hadle drag enter");
+    //}
+    //private void HandleDragLeave()
+    //{
+    //    dropClass = "";
+    //    Console.WriteLine("something left here.");
+    //}
 
-    /// <summary>
-    /// Supplies information about an drag event that is being raised.
-    /// </summary>
-    public class DragEventArgs : MouseEventArgs
-    {
-        /// <summary>
-        /// The data that underlies a drag-and-drop operation, known as the drag data store.
-        /// See <see cref="DataTransfer"/>.
-        /// </summary>
-        public DataTransfer DataTransfer { get; set; }
-    }
+    ////============= the following came from https://chrissainty.com/investigating-drag-and-drop-with-blazor/
+
+    ///// <summary>
+    ///// Supplies information about an drag event that is being raised.
+    ///// </summary>
+    //public class DragEventArgs : MouseEventArgs
+    //{
+    //    /// <summary>
+    //    /// The data that underlies a drag-and-drop operation, known as the drag data store.
+    //    /// See <see cref="DataTransfer"/>.
+    //    /// </summary>
+    //    public DataTransfer DataTransfer { get; set; }
+    //}
 }
 
