@@ -1,19 +1,20 @@
-﻿@inject AppState appState;
+﻿@*@inject AppState appState;*@
 <li class="draggable text-center" draggable="true" 
 style="list-style-type:none;display:block;" 
-@ondragend="HandleDrop" 
+@ondragend="@(() => HandleDrop())" 
 @ondragstart="@(() => HandleDragStart(@item))">
 <img style="border: 1px solid @item.borderColor" src="@item.url" width="30" height="30" alt="Scrabble tile piece" />
 </li>
 
 
 @code {
+    [CascadingParameter] public CascadingAppState appState { get; set; }
     [Parameter] public TileModel item{get;set;}
     [Parameter] public PlayerModel activePlayer{get;set;}
     [Parameter] public EventCallback OnDrop { get; set; }
     private async Task HandleDrop()
     {
-        
+
         await OnDrop.InvokeAsync(this);
     }
     private void HandleDragStart(TileModel selectedTile)
@@ -21,7 +22,7 @@ style="list-style-type:none;display:block;"
         item.borderColor="red";
         appState.selectedTile = item;
         Console.WriteLine("Player is dragging " + item.letter);
-        
+
         //Container.Payload = selectedTile;
     }
 }

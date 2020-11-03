@@ -1,6 +1,6 @@
 ﻿@page "/"
 @using Wurdz.Shared.Models
-@inject AppState appState
+@*@inject AppState appState*@
 @inject IJSRuntime JSRuntime;
 @using Plk.Blazor.DragDrop
 @using Wurdz.Components
@@ -47,7 +47,7 @@
 </div>  
 
 @code{
-
+    [CascadingParameter] public CascadingAppState appState { get; set; }
     TileModel ti = new TileModel();
     TileModel selectedTile = new TileModel();
     List<TileModel> tilePool = new List<TileModel>();
@@ -130,14 +130,14 @@
 
 
 }
-public async Task UpdatePlayerHand(TileModel t,Cell c){
+public async Task UpdatePlayerHand(TileModel t){
     currentWord.Add(t);
-    if(t.cellDroppedOn.isWordMultiplier){
+    //if(t.cellDroppedOn.isWordMultiplier){
 
-    }
-    wordScore+=(t.pointValue * t.cellDroppedOn.multiplyer);
-    Console.WriteLine(t.pointValue);
-    Console.WriteLine(t.cellDroppedOn.multiplyer );
+    //}
+    //wordScore+=(t.pointValue * t.cellDroppedOn.multiplyer);
+    //Console.WriteLine(t.pointValue);
+    //Console.WriteLine(t.cellDroppedOn.multiplyer );
     appState.player1Tiles.Remove(t);
     await OnUpdate.InvokeAsync(null);
 }

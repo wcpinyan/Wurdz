@@ -1,5 +1,5 @@
 ﻿@using Wurdz.Shared.Models
-@inject AppState appState
+@*@inject AppState appState*@
    
 
 
@@ -18,19 +18,20 @@
 
 
 @code {
-    string dropClass="";
-    [Parameter] public string image{get;set;}
-    [Parameter] public Cell Item { get; set; }
-    [Parameter] public TileModel currentTile { get; set; }
-    [Parameter] public bool HasTile { get; set; }
-    [Parameter] public PlayerModel activePlayer{get;set;}
-    [Parameter] public EventCallback<Cell> OnDrop { get; set; }
-    private void HandleDrop()
-    {
-        dropClass="";
-        HasTile=true;
-        appState.selectedTile.cellDroppedOn=Item;
-        currentTile = appState.selectedTile;
+            [CascadingParameter] public CascadingAppState appState { get; set; }
+            string dropClass="";
+            [Parameter] public string image{get;set;}
+            [Parameter] public Cell Item { get; set; }
+            [Parameter] public TileModel currentTile { get; set; }
+            [Parameter] public bool HasTile { get; set; }
+            [Parameter] public PlayerModel activePlayer{get;set;}
+            [Parameter] public EventCallback<Cell> OnDrop { get; set; }
+            private void HandleDrop()
+            {
+                dropClass="";
+                HasTile=true;
+                appState.selectedTile.cellDroppedOn=Item;
+                currentTile = appState.selectedTile;
         @* Console.WriteLine("assigned to: "+currentTile.assignedTo); *@
 
         //TODO: put other players here

@@ -1,5 +1,5 @@
 ﻿@using Plk.Blazor.DragDrop
-@inject AppState appState
+@*@inject AppState appState*@
 
 <div class="justify-content-center h1 align-self-center ">Wurdz</div>
 <div class="@dropClass grid "
@@ -17,7 +17,7 @@
             {
                 Console.WriteLine("inside STAR");
                 <CellComp Item=c
-                          image='../images/star.png'
+                          image='images/star.png'
                           HasTile="board.CurrentRow==c.row && board.CurrentCol ==c.col"
                           OnDrop="(async ()=> await UpdateBoardModel(c.row,c.col))"></CellComp>
 
@@ -74,61 +74,62 @@
  </style>
 
 @code {
-    static int numCells = 15;
-    string title = "My Wurdz Game";
-    string color;
-    TileModel droppedTile;
-    List<Cell> myListCells = new List<Cell>();
-    string urlString = "";
-    string dropClass = "";
+            [CascadingParameter] public CascadingAppState appState { get; set; }
+            static int numCells = 15;
+            string title = "My Wurdz Game";
+            string color;
+            TileModel droppedTile;
+            List<Cell> myListCells = new List<Cell>();
+            string urlString = "";
+            string dropClass = "";
 
-    public Cell Item { get; set; }
-    public TileModel currentTile { get; set; }
-    public bool HasTile { get; set; } = false;
-    public PlayerModel activePlayer{get;set;}
-    public string image { get; set; } = "";
-    [Parameter] public GameBoardModel board { get; set; } = new GameBoardModel(numCells);
-    [Parameter] public EventCallback OnUpdate { get; set; }
+            public Cell Item { get; set; }
+            public TileModel currentTile { get; set; }
+            public bool HasTile { get; set; } = false;
+            public PlayerModel activePlayer{get;set;}
+            public string image { get; set; } = "";
+            [Parameter] public GameBoardModel board { get; set; } = new GameBoardModel(numCells);
+            [Parameter] public EventCallback OnUpdate { get; set; }
 
 
 
 
-    public async Task UpdateBoardModel(int row,int col){
-        board.CurrentRow=row;
-        board.CurrentRow=col;
-        await OnUpdate.InvokeAsync(null);
+            public async Task UpdateBoardModel(int row,int col){
+                board.CurrentRow=row;
+                board.CurrentRow=col;
+                await OnUpdate.InvokeAsync(null);
 
-    }
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-        makeCells();
-        appState.boardCells=myListCells;
-    }
-
-    void makeCells()
-    {
-        foreach (Cell c in @board.cells)
-        {
-            if (c.row == 7 && c.col == 7)
+            }
+            protected override void OnInitialized()
             {
-
-                c.caption = "";
-                this.StateHasChanged();
+                base.OnInitialized();
+                makeCells();
+                appState.boardCells=myListCells;
             }
 
-            myListCells.Add(c);
-            urlString = "";
-        }
-    }
+            void makeCells()
+            {
+                foreach (Cell c in @board.cells)
+                {
+                    if (c.row == 7 && c.col == 7)
+                    {
+
+                        c.caption = "";
+                        this.StateHasChanged();
+                    }
+
+                    myListCells.Add(c);
+                    urlString = "";
+                }
+            }
 
 
-    private void HandleDrop()
-    {
-        dropClass="";
-        HasTile=true;
-        appState.selectedTile.cellDroppedOn=Item;
-        currentTile = appState.selectedTile;
+            private void HandleDrop()
+            {
+                dropClass="";
+                HasTile=true;
+                appState.selectedTile.cellDroppedOn=Item;
+                currentTile = appState.selectedTile;
         @* Console.WriteLine("assigned to: "+currentTile.assignedTo); *@
         
         //TODO: put other players here
