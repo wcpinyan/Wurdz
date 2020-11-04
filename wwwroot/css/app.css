@@ -164,7 +164,7 @@ app {
         padding-bottom: calc(100% / (var(--aspect-ratio)));
     }
 .cell {
-   
+    object-fit:cover;
     border: solid #555 0.1em;
     text-align: center;
     vertical-align: central;

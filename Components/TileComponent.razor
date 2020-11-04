@@ -3,7 +3,7 @@
 style="list-style-type:none;display:block;" 
 @ondragend="@(() => HandleDrop())" 
 @ondragstart="@(() => HandleDragStart(@item))">
-<img style="border: 1px solid @item.borderColor" src="@item.url" width="30" height="30" alt="Scrabble tile piece" />
+<img style="border: 1px solid @item.borderColor" src="@item.url" width="50" height="50" alt="Scrabble tile piece" />
 </li>
 
 
@@ -15,7 +15,7 @@ style="list-style-type:none;display:block;"
     private async Task HandleDrop()
     {
 
-        await OnDrop.InvokeAsync(this);
+        await OnDrop.InvokeAsync(item);
     }
     private void HandleDragStart(TileModel selectedTile)
     {

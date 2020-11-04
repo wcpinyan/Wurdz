@@ -2,12 +2,7 @@
 @*@inject AppState appState*@
 
 <div class="justify-content-center h1 align-self-center ">Wurdz</div>
-<div class="@dropClass grid "
-     @ondrop="HandleDrop"
-     ondragover="event.preventDefault();"
-     ondragstart="event.dataTransfer.setData('',event.target.id);"
-     @ondragenter="HandleDragEnter"
-     @ondragleave="HandleDragLeave">
+<div class=" grid ">
     @if (myListCells != null)
     {
 
@@ -16,16 +11,18 @@
             @if (c.row == 7 && c.col == 7)
             {
                 Console.WriteLine("inside STAR");
-                <CellComp Item=c
+                <CellComp Item=c                          
+                         OnDrop="(async ()=> await UpdateBoardModel(c))"
                           image='images/star.png'
                           HasTile="board.CurrentRow==c.row && board.CurrentCol ==c.col"
-                          OnDrop="(async ()=> await UpdateBoardModel(c.row,c.col))"></CellComp>
+                         ></CellComp>
 
             }
             else
             {
                 <CellComp Item=c
-                          OnDrop="(async ()=> await UpdateBoardModel(c.row,c.col))"></CellComp>
+                          image="@image"
+                          OnDrop="(async ()=> await UpdateBoardModel(c))"></CellComp>
             }
 
 
@@ -50,10 +47,11 @@
 </div>
  <style>
      .grid {
+         margin:auto;
          display: grid;
          /* grid-template-columns: 1fr 1fr 1fr;*/
-         grid-template-rows: repeat(15,1fr);
-         grid-template-columns: repeat(15,1fr);
+         grid-template-rows: repeat(15,50px);
+         grid-template-columns: repeat(15,50px);
          height: 80%;
          width: 80%;
      }
@@ -74,67 +72,68 @@
  </style>
 
 @code {
-            [CascadingParameter] public CascadingAppState appState { get; set; }
-            static int numCells = 15;
-            string title = "My Wurdz Game";
-            string color;
-            TileModel droppedTile;
-            List<Cell> myListCells = new List<Cell>();
-            string urlString = "";
-            string dropClass = "";
+    [CascadingParameter] public CascadingAppState appState { get; set; }
+    static int numCells = 15;
+    string title = "My Wurdz Game";
+    string color;
+    TileModel droppedTile;
+    List<Cell> myListCells = new List<Cell>();
+    string urlString = "";
+    string dropClass = "";
 
-            public Cell Item { get; set; }
-            public TileModel currentTile { get; set; }
-            public bool HasTile { get; set; } = false;
-            public PlayerModel activePlayer{get;set;}
-            public string image { get; set; } = "";
-            [Parameter] public GameBoardModel board { get; set; } = new GameBoardModel(numCells);
-            [Parameter] public EventCallback OnUpdate { get; set; }
-
-
+    public Cell Item { get; set; }
+    public TileModel currentTile { get; set; }
+    public bool HasTile { get; set; } = false;
+    public PlayerModel activePlayer{get;set;}
+    public string image { get; set; } = "";
+    [Parameter] public GameBoardModel board { get; set; } = new GameBoardModel(numCells);
+    [Parameter] public EventCallback OnUpdate { get; set; }
 
 
-            public async Task UpdateBoardModel(int row,int col){
-                board.CurrentRow=row;
-                board.CurrentRow=col;
-                await OnUpdate.InvokeAsync(null);
+
+
+    public async Task UpdateBoardModel(Cell c){
+        board.CurrentRow=c.row;
+        board.CurrentRow=c.col;
+        await OnUpdate.InvokeAsync(null);
+
+    }
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        makeCells();
+        appState.boardCells=myListCells;
+    }
+
+    void makeCells()
+    {
+        foreach (Cell c in @board.cells)
+        {
+            if (c.row == 7 && c.col == 7)
+            {
+
+                c.caption = "";
+                c.image = "images/star.png";
 
             }
-            protected override void OnInitialized()
-            {
-                base.OnInitialized();
-                makeCells();
-                appState.boardCells=myListCells;
-            }
 
-            void makeCells()
-            {
-                foreach (Cell c in @board.cells)
-                {
-                    if (c.row == 7 && c.col == 7)
-                    {
-
-                        c.caption = "";
-                        this.StateHasChanged();
-                    }
-
-                    myListCells.Add(c);
-                    urlString = "";
-                }
-            }
+            myListCells.Add(c);
+            urlString = "";
+        }
+    }
 
 
-            private void HandleDrop()
-            {
-                dropClass="";
-                HasTile=true;
-                appState.selectedTile.cellDroppedOn=Item;
-                currentTile = appState.selectedTile;
+    private async Task HandleDrop(Cell c)
+    {
+        dropClass="";
+        HasTile=true;
+        appState.selectedTile.cellDroppedOn=Item;
+        currentTile = appState.selectedTile;
         @* Console.WriteLine("assigned to: "+currentTile.assignedTo); *@
-        
+
         //TODO: put other players here
     }
-  
+
     private void HandleDragEnter()
     {
         dropClass="can-drop";
@@ -161,7 +160,26 @@
         /// </summary>
         public DataTransfer DataTransfer { get; set; }
     }
-   
+    public class DataTransfer
+    {
+        /// <summary>
+        /// Gets the type of drag-and-drop operation currently selected or sets the operation to a new type.
+        /// The value must be none, copy, link or move.
+        /// </summary>
+        public string DropEffect { get; set; }
+
+        
+        /// <summary>
+        /// Gives a <see cref="DataTransferItem"/> array which is a list of all of the drag data.
+        /// </summary>
+        public TileModel[] Items { get; set; }
+
+        /// <summary>
+        /// An array of <see cref="string"/> giving the formats that were set in the dragstart event.
+        /// </summary>
+        public string[] Types { get; set; }
+    }
+
 
 
 }

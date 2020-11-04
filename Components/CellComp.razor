@@ -1,67 +1,61 @@
 ﻿@using Wurdz.Shared.Models
 @*@inject AppState appState*@
-   
 
 
-        @if (HasTile)
-        {
-            
-          <img style="border:.1em solid @currentTile.borderColor" src="@currentTile.url"  alt="Alternate Text" />
-        }
-        else
-        {
-            <div style="background-color:@Item.color;align-content:center;">
-                @if(image!=""){<img src= @image>} 
-                @Item.caption</div>            
-        }
-   
+
+@*@if (Item.)
+    {
+
+      <img style="border:.1em solid @currentTile.borderColor" src="@appState.selectedCell.image"  alt="Alternate Text" />
+    }
+    else
+    {*@
+<div class="dropzone"
+     ondragover="event.preventDefault();"
+     @ondragenter="HandleDragEnter"
+     @ondrop="HandleDrop" style="background-color:@Item.color;align-content:center;">
+    @if (Item.image != null)
+    {
+        <img style="display:block;margin:auto;width:90%;height:90%;z-index:3" src="@Item.image">
+    }
+    else
+    {
+        <span style="z-index:2">@Item.caption</span>
+
+    }
+</div>
+@*}*@
+
 
 
 @code {
-            [CascadingParameter] public CascadingAppState appState { get; set; }
-            string dropClass="";
-            [Parameter] public string image{get;set;}
-            [Parameter] public Cell Item { get; set; }
-            [Parameter] public TileModel currentTile { get; set; }
-            [Parameter] public bool HasTile { get; set; }
-            [Parameter] public PlayerModel activePlayer{get;set;}
-            [Parameter] public EventCallback<Cell> OnDrop { get; set; }
-            private void HandleDrop()
-            {
-                dropClass="";
-                HasTile=true;
-                appState.selectedTile.cellDroppedOn=Item;
-                currentTile = appState.selectedTile;
+    [CascadingParameter] public CascadingAppState appState { get; set; }
+    string dropClass = "";
+    [Parameter] public string image { get; set; }
+    [Parameter] public Cell Item { get; set; }
+    [Parameter] public TileModel currentTile { get; set; }
+    [Parameter] public bool HasTile { get; set; }
+    [Parameter] public PlayerModel activePlayer { get; set; }
+    [Parameter] public EventCallback<Cell> OnDrop { get; set; }
+    private void HandleDrop()
+    {
+        dropClass = "";
+        HasTile = true;
+        appState.selectedTile.cellDroppedOn = Item;
+        currentTile = appState.selectedTile;
+        Item.image = currentTile.url;
+        appState.selectedCell = Item;
         @* Console.WriteLine("assigned to: "+currentTile.assignedTo); *@
 
         //TODO: put other players here
     }
 
-    //private void HandleDragEnter()
-    //{
-    //    dropClass="can-drop";
-    //    //Console.WriteLine("Data transfer item" + e.GetType());
-    //    //Console.WriteLine("Data transfer item" + e.DataTransfer.Items[0]);
-    //    Console.WriteLine("hadle drag enter");
-    //}
-    //private void HandleDragLeave()
-    //{
-    //    dropClass = "";
-    //    Console.WriteLine("something left here.");
-    //}
-
-    ////============= the following came from https://chrissainty.com/investigating-drag-and-drop-with-blazor/
-
-    ///// <summary>
-    ///// Supplies information about an drag event that is being raised.
-    ///// </summary>
-    //public class DragEventArgs : MouseEventArgs
-    //{
-    //    /// <summary>
-    //    /// The data that underlies a drag-and-drop operation, known as the drag data store.
-    //    /// See <see cref="DataTransfer"/>.
-    //    /// </summary>
-    //    public DataTransfer DataTransfer { get; set; }
-    //}
+    private void HandleDragEnter()
+    {
+        var cell = Item;
+        dropClass = "can-drop";
+        Console.WriteLine("hadle drag enter");
+    }
+   
 }
 

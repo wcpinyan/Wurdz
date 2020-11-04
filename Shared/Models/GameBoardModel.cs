@@ -23,7 +23,7 @@ namespace Wurdz.Shared.Models
                     Cell cell = new Cell();
                     cell.row = i;
                     cell.col = j;
-                    SetColor(cell);
+                    SetCellValues(cell);
                     cells[i, j] = cell;
                     //Console.WriteLine(i + "," + j + cell.color);
                 }
@@ -47,10 +47,9 @@ namespace Wurdz.Shared.Models
                             //}
                             if (c.col == rowCount || c.col == numCellsPerSide - rowCount - 1)
                             {
-                                c.isWordMultiplier=true;
                                 c.color = "pink";
                                 c.caption = "DW";
-                                c.multiplyer=2;
+                                c.wordMultiplyer=2;
                             }
                         }
                     }
@@ -66,23 +65,24 @@ namespace Wurdz.Shared.Models
 
 
             }
-            void SetColor(Cell c)
+            void SetCellValues(Cell c)
             {
                 // setup a criss-cross of pink squares...then override with other colors as necessary
-
-                //set center square to white 1st since otherwise it would be set to red
+                c.letterMultiplier = 1; //unless otherwise noted
+                //set center square to pink 1st since otherwise it would be set to red
                 if (c.row == 7 && c.col == 7)
                 {
-                    c.caption = "X";
                     c.color = "pink";
+                    c.caption = "";
+                    c.wordMultiplyer = 2;
+                    c.image = "images/star.png";
                     return;
                 }
                 if ((c.row == 0 || c.row == 7 || c.row == 14) && (c.col == 0 || c.col == 7 || c.col == 14))
                 {
-                    c.isWordMultiplier=true;
                     c.caption = "TW";
                     c.color = "red";
-                    c.multiplyer=3;
+                    c.wordMultiplyer=3;
                     return;
                 }
                 if ((c.row == 0 && (c.col == 3 || c.col == 11)) ||
@@ -102,7 +102,7 @@ namespace Wurdz.Shared.Models
                 {
                     c.caption = "DL";
                     c.color = "lightblue";
-                    c.multiplyer=2;
+                    c.letterMultiplier=2;
                     return;
                 }
               
@@ -112,30 +112,18 @@ namespace Wurdz.Shared.Models
                 {
                     c.caption = "TL";
                     c.color = "steelblue";
-                    c.multiplyer=3;
+                    c.letterMultiplier=3;
                     return;
                 }
-                if (c.row == 7 && c.col == 7)
-                    {
-                        c.color = "pink";
-                        c.caption = "X";
-                        return;
-                    }
+                
                 else { 
                     c.caption = "";
                     c.color = "whitesmoke";
-                    c.multiplyer=1;
+                    c.letterMultiplier=1;
                     return;
                 
                 }
-                // if ((c.row == 0 || c.row == 7 || c.row == 14) && (c.col == 0 || c.col == 7 || c.col == 14))
-                // {
-                //     c.isWordMultiplier=true;
-                //     c.caption = "DW";
-                //     c.color = "red";
-                //     c.multiplyer=2;
-                //     return;
-                // }
+               
             }
 
         }
@@ -157,8 +145,9 @@ namespace Wurdz.Shared.Models
         public string caption { get; set; }
         public int col { get; set; }
         public int row { get; set; }
+        public string image { get; set; }
         public string color { get; set; }
-        public  int multiplyer { get; set; }
-        public bool isWordMultiplier { get; set; }
+        public  int wordMultiplyer { get; set; }
+        public int letterMultiplier { get; set; }
     }
 }

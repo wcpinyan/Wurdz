@@ -5,23 +5,25 @@
 @using Plk.Blazor.DragDrop
 @using Wurdz.Components
 
- <div class="row">
-        <Players players=@players></Players>
-        @if(currentWord.Count()>0){
-            <h5>Word:</h5> 
-            <div style="height:40px;background-color:yellow;margin-left:5px;padding:3px;font-size:1.5em;font-weight:bold">
-            @foreach(var t in currentWord){                
+<div class="row">
+    <Players players=@players></Players>
+    @if (currentWord.Count() > 0)
+    {
+        <h5>Word:</h5>
+        <div style="height:40px;background-color:yellow;margin-left:5px;padding:3px;font-size:1.5em;font-weight:bold">
+            @foreach (var t in currentWord)
+            {
                 <span style="align-content: center;">@t.letter</span>
             }
-            </div> @wordScore
-        }
-    </div>
+        </div> @wordScore
+    }
+</div>
 <div class="gridmain">
-    <div > <Wurdz.Components.Board /></div>
+    <div> <Wurdz.Components.Board /></div>
     <br />
-   
-    
-  @if (done)
+
+
+    @if (done)
     {
         @if (appState.player1Tiles.Count > 0)
         {
@@ -30,8 +32,8 @@
                 @foreach (var t in appState.player1Tiles)
                 {
                     <TileComponent item=t activePlayer=@player1
-                    OnDrop="( async()=> await UpdatePlayerHand(t))"></TileComponent>
-                   
+                                   OnDrop="(async () => await UpdatePlayerHand(t))"></TileComponent>
+
                 }
 
             </ul>
@@ -39,12 +41,13 @@
         <div class="text-center bg-secondary text-white" style="grid-row:3;grid-column:1">P L A Y E R  1</div>
         <br />
         <div class="btn-group role=group" style="grid-row:4;grid-column:1">
-            <button type="button" style="height:40px;width:50px" class="m-3 btn btn-success btn-small">Score Word</button>
-            <button type="button"  style="height:40px;width:50px"  class="m-3 btn btn-success">Challenge Opponent</button>
-            <button type="button"  style="height:40px;width:50px"  class="m-3 btn btn-success">Draw Tiles</button>
+            <button type="button" @onclick="RecallWord" style="height:40px;width:50px" class="m-3 btn btn-success btn-small">Recall Word</button>
+            <button type="button" @onclick="ScoreWord" style="height:40px;width:50px" class="m-3 btn btn-success btn-small">Score Word</button>
+            <button type="button" style="height:40px;width:50px" class="m-3 btn btn-success">Challenge Opponent</button>
+            <button type="button" style="height:40px;width:50px" class="m-3 btn btn-success">Draw Tiles</button>
         </div>
     }
-</div>  
+</div>
 
 @code{
     [CascadingParameter] public CascadingAppState appState { get; set; }
@@ -52,17 +55,17 @@
     TileModel selectedTile = new TileModel();
     List<TileModel> tilePool = new List<TileModel>();
     List<TileModel> shuffled = new List<TileModel>();
-    List<PlayerModel> players=new List<PlayerModel>();
+    List<PlayerModel> players = new List<PlayerModel>();
     PlayerModel player1 = new PlayerModel();
     PlayerModel player2 = new PlayerModel();
     List<TileModel> player1Tiles;
     List<TileModel> player2Tiles;
     GameBoardModel b;
-    List<TileModel> currentWord=new List<TileModel>();
+    List<TileModel> currentWord = new List<TileModel>();
     Boolean done = false;
-    int wordScore=0;
-    [Parameter] public EventCallback OnUpdate {get;set;}
-    string[] letters = { "BL", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "w", "X", "Y", "Z" };
+    int wordScore = 0;
+    [Parameter] public EventCallback OnUpdate { get; set; }
+    string[] letters = { "BL", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" };
 
     //The num of tiles for the letter and the score value.
     int[,] tilenums = {{2, 0 }, //Blank
@@ -109,59 +112,61 @@
             players.Add(player1);
             players.Add(player2);
             Console.WriteLine(players[0].userName);
-            Console.WriteLine("players count: "+players.Count());
+            Console.WriteLine("players count: " + players.Count());
             createTilePool();
             ti.DrawInitialHands(appState.shuffledTiles, player1);
             @* Console.WriteLine(TileModel.player1Tiles.Count); *@
             ti.DrawInitialHands(appState.shuffledTiles, player2);
             @* Console.WriteLine(TileModel.player2Tiles.Count); *@
-        appState.player1Tiles = TileModel.player1Tiles;
-        appState.player2Tiles = TileModel.player2Tiles;
-        done = true;
-        this.StateHasChanged();
+            appState.player1Tiles = TileModel.player1Tiles;
+            appState.player2Tiles = TileModel.player2Tiles;
+            done = true;
+            this.StateHasChanged();
 
-        //JSRuntime.InvokeVoidAsync("handleTickerChanged",
-        //  stockUpdate.symbol, stockUpdate.price);
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine("Error xyz: " + ex.Message);
-    }
-
-
-}
-public async Task UpdatePlayerHand(TileModel t){
-    currentWord.Add(t);
-    //if(t.cellDroppedOn.isWordMultiplier){
-
-    //}
-    //wordScore+=(t.pointValue * t.cellDroppedOn.multiplyer);
-    //Console.WriteLine(t.pointValue);
-    //Console.WriteLine(t.cellDroppedOn.multiplyer );
-    appState.player1Tiles.Remove(t);
-    await OnUpdate.InvokeAsync(null);
-}
-void createTilePool()
-{
-    try
-    {
-        for (int i = 0; i < letters.Length; i++)
+            //JSRuntime.InvokeVoidAsync("handleTickerChanged",
+            //  stockUpdate.symbol, stockUpdate.price);
+        }
+        catch (Exception ex)
         {
-            string url = $"images/{letters[i]}.svg";
+            Console.WriteLine("Error xyz: " + ex.Message);
+        }
+
+
+    }
+    public async Task UpdatePlayerHand(TileModel t)
+    {
+        currentWord.Add(t);
+        //if(t.cellDroppedOn.isWordMultiplier){
+
+        //}
+        //wordScore+=(t.pointValue * t.cellDroppedOn.multiplyer);
+        //Console.WriteLine(t.pointValue);
+        //Console.WriteLine(t.cellDroppedOn.multiplyer );
+        appState.player1Tiles.Remove(t);
+        await OnUpdate.InvokeAsync(null);
+    }
+    void createTilePool()
+    {
+        try
+        {
+            for (int i = 0; i < letters.Length; i++)
+            {
+                string url = $"images/{letters[i]}.svg";
                 @* Console.WriteLine(url); *@
                 ti = new TileModel(i, url, letters[i].ToString(), tilenums[i, 1], tilenums[i, 0]);
 
+
+
+                tilePool = TileModel.tilePool; //tilePool is a static class variable not instance var
+                                               // Console.WriteLine(tilePool);
+                shuffled = TileModel.ShufflePool();
+                appState.shuffledTiles = shuffled;
+
+                @* Console.WriteLine(shuffled.Count); *@
+
+
+
             }
-
-            tilePool = TileModel.tilePool; //tilePool is a static class variable not instance var
-                                           // Console.WriteLine(tilePool);
-            shuffled = TileModel.ShufflePool();
-            appState.shuffledTiles = shuffled;
-
-            @* Console.WriteLine(shuffled.Count); *@
-            
-          
-
         }
         catch (Exception ex)
         {
@@ -170,7 +175,44 @@ void createTilePool()
 
 
     }
-    
 
+    void ScoreWord()
+    {
+        Cell cell = null;
+        int wordMultiplyer = 1;
 
+        foreach (TileModel t in currentWord)
+        {
+            cell = t.cellDroppedOn;
+            //assume 1 for all then update for anything above
+            if (cell.wordMultiplyer > 1)
+            {
+                wordMultiplyer = cell.wordMultiplyer;
+            }
+            wordScore += t.pointValue * cell.letterMultiplier;
+        }
+        wordScore *= wordMultiplyer;
+    }
+    void RecallWord()
+    {
+        Cell cell;
+
+        foreach (TileModel t in currentWord)
+        {
+
+            cell = t.cellDroppedOn;
+            if(cell.col==7 && cell.row == 7)
+            {
+                cell.image = "images/star.png";
+            }
+            else
+            {
+                cell.image = "";
+            }
+            appState.player1Tiles.Add(t);
+
+        }
+        currentWord.Clear();
+        StateHasChanged();
+    }
 }
