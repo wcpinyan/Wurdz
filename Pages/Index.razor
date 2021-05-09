@@ -4,6 +4,7 @@
 @inject IJSRuntime JSRuntime;
 @using Plk.Blazor.DragDrop
 @using Wurdz.Components
+@using Wurdz.Shared.GameManager
 
 <div class="row">
     <Players players=@players></Players>
@@ -44,7 +45,7 @@
             <button type="button" @onclick="RecallWord" style="height:40px;width:50px" class="m-3 btn btn-success btn-small">Recall Word</button>
             <button type="button" @onclick="ScoreWord" style="height:40px;width:50px" class="m-3 btn btn-success btn-small">Score Word</button>
             <button type="button" style="height:40px;width:50px" class="m-3 btn btn-success">Challenge Opponent</button>
-            <button type="button" style="height:40px;width:50px" class="m-3 btn btn-success">Draw Tiles</button>
+            <button type="button" style="height:40px;width:50px" class="m-3 btn btn-success">Pass</button>
         </div>
     }
 </div>
@@ -104,7 +105,9 @@
     {
         try
         {
-            base.OnInitialized();
+            var manager = appState.Manager = new GameManager();
+            var state = appState.State = GameManager.GameState.BoardConstructed;
+            ProcessState(state);
             player1.number = (int)PlayerNum.One;
             player2.number = (int)PlayerNum.Two;
             player1.userName = "Joe";
@@ -113,7 +116,6 @@
             players.Add(player2);
             Console.WriteLine(players[0].userName);
             Console.WriteLine("players count: " + players.Count());
-            createTilePool();
             ti.DrawInitialHands(appState.shuffledTiles, player1);
             @* Console.WriteLine(TileModel.player1Tiles.Count); *@
             ti.DrawInitialHands(appState.shuffledTiles, player2);
@@ -133,86 +135,5 @@
 
 
     }
-    public async Task UpdatePlayerHand(TileModel t)
-    {
-        currentWord.Add(t);
-        //if(t.cellDroppedOn.isWordMultiplier){
 
-        //}
-        //wordScore+=(t.pointValue * t.cellDroppedOn.multiplyer);
-        //Console.WriteLine(t.pointValue);
-        //Console.WriteLine(t.cellDroppedOn.multiplyer );
-        appState.player1Tiles.Remove(t);
-        await OnUpdate.InvokeAsync(null);
-    }
-    void createTilePool()
-    {
-        try
-        {
-            for (int i = 0; i < letters.Length; i++)
-            {
-                string url = $"images/{letters[i]}.svg";
-                @* Console.WriteLine(url); *@
-                ti = new TileModel(i, url, letters[i].ToString(), tilenums[i, 1], tilenums[i, 0]);
-
-
-
-                tilePool = TileModel.tilePool; //tilePool is a static class variable not instance var
-                                               // Console.WriteLine(tilePool);
-                shuffled = TileModel.ShufflePool();
-                appState.shuffledTiles = shuffled;
-
-                @* Console.WriteLine(shuffled.Count); *@
-
-
-
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine("ERROR:  ======>" + ex.Message.ToString());
-        }
-
-
-    }
-
-    void ScoreWord()
-    {
-        Cell cell = null;
-        int wordMultiplyer = 1;
-
-        foreach (TileModel t in currentWord)
-        {
-            cell = t.cellDroppedOn;
-            //assume 1 for all then update for anything above
-            if (cell.wordMultiplyer > 1)
-            {
-                wordMultiplyer = cell.wordMultiplyer;
-            }
-            wordScore += t.pointValue * cell.letterMultiplier;
-        }
-        wordScore *= wordMultiplyer;
-    }
-    void RecallWord()
-    {
-        Cell cell;
-
-        foreach (TileModel t in currentWord)
-        {
-
-            cell = t.cellDroppedOn;
-            if(cell.col==7 && cell.row == 7)
-            {
-                cell.image = "images/star.png";
-            }
-            else
-            {
-                cell.image = "";
-            }
-            appState.player1Tiles.Add(t);
-
-        }
-        currentWord.Clear();
-        StateHasChanged();
-    }
 }

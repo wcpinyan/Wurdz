@@ -6,6 +6,32 @@
     [Parameter]
     public RenderFragment ChildContent { get; set; }
 
+    private GameManager.GameManager manager;
+
+    public GameManager.GameManager Manager
+    {
+        get { return manager; }
+        set { manager = value; }
+    }
+
+    private GameManager.GameManager.GameState _gameState;
+
+    public GameManager.GameManager.GameState State
+    {
+        get { return _gameState; }
+        set { _gameState = value; }
+    }
+
+
+    private int myVar;
+
+    public int MyProperty
+    {
+        get { return myVar; }
+        set { myVar = value; }
+    }
+
+
     private List<TileModel> _shuffledTiles;
 
     public List<TileModel> shuffledTiles
